@@ -1551,16 +1551,19 @@ void qt_mac_dispatchPendingUpdateRequests(QWidget *widget)
 #ifndef QT_MAC_USE_COCOA
     HIViewRender(qt_mac_nativeview_for(widget));
 #else
-    [qt_mac_nativeview_for(widget) displayIfNeeded];
+    return [qt_mac_nativeview_for(widget) displayIfNeeded];
 #endif
 }
 
-CGFloat qt_mac_get_scalefactor()
+CGFloat qt_mac_get_scalefactor(QWidget *window)
 {
 #ifndef QT_MAC_USE_COCOA
+    Q_UNUSED(window);
     return HIGetScaleFactor();
 #else
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
+    if (window == 0)
+        return [[NSScreen mainScreen] backingScaleFactor];
+    return [qt_mac_window_for(window) backingScaleFactor];
 #endif
 }
 
