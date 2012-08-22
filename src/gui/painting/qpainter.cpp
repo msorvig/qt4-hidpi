@@ -5389,7 +5389,8 @@ void QPainter::drawPixmap(const QPointF &p, const QPixmap &pm)
             x += d->state->matrix.dx();
             y += d->state->matrix.dy();
         }
-        d->engine->drawPixmap(QRectF(x, y, w, h), pm, QRectF(0, 0, w, h));
+        int scale = pm.physicalDpiX() / pm.logicalDpiX();
+        d->engine->drawPixmap(QRectF(x, y, w / scale, h / scale), pm, QRectF(0, 0, w, h));
     }
 }
 
@@ -5518,7 +5519,8 @@ void QPainter::drawPixmap(const QRectF &r, const QPixmap &pm, const QRectF &sr)
             x += d->state->matrix.dx();
             y += d->state->matrix.dy();
         }
-        d->engine->drawPixmap(QRectF(x, y, w, h), pm, QRectF(sx, sy, sw, sh));
+        int scale = pm.physicalDpiX() / pm.logicalDpiX();
+        d->engine->drawPixmap(QRectF(x, y, w / scale, h / scale), pm, QRectF(sx, sy, sw, sh));
     }
 }
 

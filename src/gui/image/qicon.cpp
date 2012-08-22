@@ -238,9 +238,15 @@ QPixmapIconEngineEntry *QPixmapIconEngine::bestMatch(const QSize &size, QIcon::M
     return pe;
 }
 
-QPixmap QPixmapIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
+QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::State state)
 {
     QPixmap pm;
+    QSize size = inSize;
+
+#ifdef Q_WS_MAC
+    size *= qt_mac_get_scalefactor();
+#endif
+
     QPixmapIconEngineEntry *pe = bestMatch(size, mode, state, false);
     if (pe)
         pm = pe->pixmap;
@@ -294,6 +300,12 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::St
         }
         QPixmapCache::insert(key % HexString<uint>(mode), pm);
     }
+
+#ifdef Q_WS_MAC
+    extern void qt_mac_set_pixmap_scale(QPixmap *pixmap, int scale);
+    if (pm.size().width() > inSize.width()) // detect HiDPI pixmap
+        qt_mac_set_pixmap_scale(&pm, 2);
+#endif
     return pm;
 }
 

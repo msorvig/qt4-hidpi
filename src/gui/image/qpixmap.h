@@ -271,6 +271,7 @@ private:
     friend IconRef qt_mac_create_iconref(const QPixmap&);
     friend quint32 *qt_mac_pixmap_get_base(const QPixmap*);
     friend int qt_mac_pixmap_get_bytes_per_line(const QPixmap*);
+    friend void qt_mac_set_pixmap_scale(QPixmap *pixmap, int scale);
 #endif
     friend class QPixmapData;
     friend class QX11PixmapData;

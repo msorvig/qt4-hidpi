@@ -174,7 +174,7 @@ QMacPixmapData::QMacPixmapData(PixelType type)
     : QPixmapData(type, MacClass), has_alpha(0), has_mask(0),
       uninit(true), pixels(0), pixelsSize(0), pixelsToFree(0),
       bytesPerRow(0), cg_data(0), cg_dataBeingReleased(0), cg_mask(0),
-      pengine(0)
+      scale(1), pengine(0)
 {
 }
 
@@ -485,8 +485,16 @@ void QMacPixmapData::setMask(const QBitmap &mask)
     macSetAlphaChannel(maskData, true);
 }
 
+void qt_mac_set_pixmap_scale(QPixmap *pixmap, int scale)
+{
+    static_cast<QMacPixmapData*>(pixmap->data.data())->scale = scale;
+}
+
+
 int QMacPixmapData::metric(QPaintDevice::PaintDeviceMetric theMetric) const
 {
+    extern float qt_mac_defaultDpi_x(); //qpaintdevice_mac.cpps
+    extern float qt_mac_defaultDpi_y(); //qpaintdevice_mac.cpp
     switch (theMetric) {
     case QPaintDevice::PdmWidth:
         return w;
@@ -499,14 +507,14 @@ int QMacPixmapData::metric(QPaintDevice::PaintDeviceMetric theMetric) const
     case QPaintDevice::PdmNumColors:
         return 1 << d;
     case QPaintDevice::PdmDpiX:
-    case QPaintDevice::PdmPhysicalDpiX: {
-        extern float qt_mac_defaultDpi_x(); //qpaintdevice_mac.cpp
         return int(qt_mac_defaultDpi_x());
+    case QPaintDevice::PdmPhysicalDpiX: {
+        return int(qt_mac_defaultDpi_x() * scale);
     }
     case QPaintDevice::PdmDpiY:
+        return int(qt_mac_defaultDpi_x());
     case QPaintDevice::PdmPhysicalDpiY: {
-        extern float qt_mac_defaultDpi_y(); //qpaintdevice_mac.cpp
-        return int(qt_mac_defaultDpi_y());
+        return int(qt_mac_defaultDpi_y() * scale);
     }
     case QPaintDevice::PdmDepth:
         return d;
@@ -1197,6 +1205,7 @@ void QMacPixmapData::copy(const QPixmapData *data, const QRect &rect)
     has_alpha = macData->has_alpha;
     has_mask = macData->has_mask;
     uninit = false;
+    scale = macData->scale;
 
     const int x = rect.x();
     const int y = rect.y();
