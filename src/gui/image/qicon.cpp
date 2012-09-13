@@ -139,11 +139,8 @@ QPixmapIconEngine::~QPixmapIconEngine()
 
 void QPixmapIconEngine::paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state)
 {
-    QSize pixmapSize = rect.size();
-#if defined(Q_WS_MAC)
-    pixmapSize *= qt_mac_get_scalefactor();
-#endif
-    painter->drawPixmap(rect, pixmap(pixmapSize, mode, state));
+    QSize targetRectSize = rect.size();
+    painter->drawPixmap(rect, pixmap(targetRectSize, mode, state));
 }
 
 static inline int area(const QSize &s) { return s.width() * s.height(); }
