@@ -5683,7 +5683,8 @@ void QPainter::drawImage(const QPointF &p, const QImage &image)
         y += d->state->matrix.dy();
     }
 
-    d->engine->drawImage(QRectF(x, y, w, h), image, QRectF(0, 0, w, h), Qt::AutoColor);
+    int scale = image.physicalDpiX() / image.logicalDpiX();
+    d->engine->drawImage(QRectF(x, y, w / scale, h / scale), image, QRectF(0, 0, w, h), Qt::AutoColor);
 }
 
 void QPainter::drawImage(const QRectF &targetRect, const QImage &image, const QRectF &sourceRect,
@@ -5702,6 +5703,7 @@ void QPainter::drawImage(const QRectF &targetRect, const QImage &image, const QR
     qreal sy = sourceRect.y();
     qreal sw = sourceRect.width();
     qreal sh = sourceRect.height();
+    int imageScale = image.physicalDpiX() / image.logicalDpiX();
 
     // Sanity-check clipping
     if (sw <= 0)
@@ -5711,9 +5713,9 @@ void QPainter::drawImage(const QRectF &targetRect, const QImage &image, const QR
         sh = image.height() - sy;
 
     if (w < 0)
-        w = sw;
+        w = sw / imageScale;
     if (h < 0)
-        h = sh;
+        h = sh / imageScale;
 
     if (sx < 0) {
         qreal w_ratio = sx * w/sw;
