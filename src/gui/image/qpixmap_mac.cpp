@@ -174,7 +174,7 @@ QMacPixmapData::QMacPixmapData(PixelType type)
     : QPixmapData(type, MacClass), has_alpha(0), has_mask(0),
       uninit(true), pixels(0), pixelsSize(0), pixelsToFree(0),
       bytesPerRow(0), cg_data(0), cg_dataBeingReleased(0), cg_mask(0),
-      scale(1), pengine(0)
+      pengine(0)
 {
 }
 
@@ -393,6 +393,7 @@ QImage QMacPixmapData::toImage() const
     if (image.isNull())
         return image;
     image.setDPIScale(scale);
+
     quint32 *sptr = pixels, *srow;
     const uint sbpr = bytesPerRow;
     if (format == QImage::Format_MonoLSB) {
@@ -487,14 +488,10 @@ void QMacPixmapData::setMask(const QBitmap &mask)
     macSetAlphaChannel(maskData, true);
 }
 
-void qt_mac_set_pixmap_scale(QPixmap *pixmap, int scale)
-{
-    static_cast<QMacPixmapData*>(pixmap->data.data())->scale = scale;
-}
-
-
 int QMacPixmapData::metric(QPaintDevice::PaintDeviceMetric theMetric) const
 {
+
+
     extern float qt_mac_defaultDpi_x(); //qpaintdevice_mac.cpps
     extern float qt_mac_defaultDpi_y(); //qpaintdevice_mac.cpp
     switch (theMetric) {

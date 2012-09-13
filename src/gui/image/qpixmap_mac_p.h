@@ -113,7 +113,6 @@ private:
     QRectF cg_mask_rect;
     CGImageRef cg_data, cg_dataBeingReleased, cg_mask;
     static QSet<QMacPixmapData*> validDataPointers;
-    int scale;
 
     QPaintEngine *pengine;
 
