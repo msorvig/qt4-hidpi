@@ -241,7 +241,6 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
     QSize size = inSize;
 
 #ifdef Q_WS_MAC
-    size *= qt_mac_get_scalefactor();
   //  if (!qgetenv("QT_HIDPI_AWARE").isEmpty()) ### enable check before merging change
         size *= qt_mac_get_scalefactor();
 #endif
