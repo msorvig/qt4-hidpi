@@ -240,6 +240,7 @@ void QMacPixmapData::fromImage(const QImage &img,
     h = img.height();
     is_null = (w <= 0 || h <= 0);
     d = (pixelType() == BitmapType ? 1 : img.depth());
+    scale = img.physicalDpiX() / img.logicalDpiY();
 
     QImage image = img;
     int dd = QPixmap::defaultDepth();
@@ -391,6 +392,7 @@ QImage QMacPixmapData::toImage() const
         // exit if image was not created (out of memory)
     if (image.isNull())
         return image;
+    image.setDPIScale(scale);
     quint32 *sptr = pixels, *srow;
     const uint sbpr = bytesPerRow;
     if (format == QImage::Format_MonoLSB) {

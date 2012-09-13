@@ -242,6 +242,8 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
 
 #ifdef Q_WS_MAC
     size *= qt_mac_get_scalefactor();
+  //  if (!qgetenv("QT_HIDPI_AWARE").isEmpty()) ### enable check before merging change
+        size *= qt_mac_get_scalefactor();
 #endif
 
     QPixmapIconEngineEntry *pe = bestMatch(size, mode, state, false);
@@ -301,7 +303,7 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
 #ifdef Q_WS_MAC
     extern void qt_mac_set_pixmap_scale(QPixmap *pixmap, int scale);
     if (pm.size().width() > inSize.width()) // detect HiDPI pixmap
-        qt_mac_set_pixmap_scale(&pm, 2);
+        pm.setDPIScale(2.0);
 #endif
     return pm;
 }

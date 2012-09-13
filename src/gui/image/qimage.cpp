@@ -127,7 +127,7 @@ const QVector<QRgb> *qt_image_colortable(const QImage &image)
 QBasicAtomicInt qimage_serial_number = Q_BASIC_ATOMIC_INITIALIZER(1);
 
 QImageData::QImageData()
-    : ref(0), width(0), height(0), depth(0), nbytes(0), data(0),
+    : ref(0), width(0), height(0), depth(0), nbytes(0), scale(1.0), data(0),
 #ifdef QT3_SUPPORT
       jumptable(0),
 #endif
@@ -1726,6 +1726,11 @@ void QImage::setColorTable(const QVector<QRgb> colors)
 QVector<QRgb> QImage::colorTable() const
 {
     return d ? d->colortable : QVector<QRgb>();
+}
+
+void QImage::setDPIScale(qreal scale)
+{
+    d->scale = scale;
 }
 
 

@@ -779,6 +779,11 @@ void QPixmap::setMask(const QBitmap &mask)
     data->setMask(mask);
 }
 
+void QPixmap::setDPIScale(qreal scale)
+{
+    data->scale = scale;
+}
+
 #ifndef QT_NO_IMAGE_HEURISTIC_MASK
 /*!
     Creates and returns a heuristic mask for this pixmap.

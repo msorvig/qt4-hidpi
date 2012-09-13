@@ -155,6 +155,7 @@ protected:
     int h;
     int d;
     bool is_null;
+    qreal scale;
 
 private:
     friend class QPixmap;
