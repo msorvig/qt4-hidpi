@@ -190,6 +190,7 @@ private slots:
     void splash_crash();
 
     void toImageDeepCopy();
+    void toImagePreserveDPI();
 
     void loadAsBitmapOrPixmap();
 
@@ -1800,6 +1801,33 @@ void tst_QPixmap::toImageDeepCopy()
 
     QVERIFY(first != second);
 }
+
+void tst_QPixmap::toImagePreserveDPI()
+{
+    QPixmap pixmap(64, 64);
+    pixmap.fill(Qt::white);
+
+    int scale = pixmap.physicalDpiX() / pixmap.logicalDpiX();
+    QCOMPARE(scale, 1);
+
+    pixmap.setDPIScale(2.0);
+    scale = pixmap.physicalDpiX() / pixmap.logicalDpiX();
+    QCOMPARE(scale, 2);
+
+    QImage image;
+    image = pixmap.toImage();
+    scale = image.physicalDpiX() / image.logicalDpiX();
+    QCOMPARE(scale, 2);
+
+    QPixmap pixmap2 = QPixmap::fromImage(image);
+    scale = pixmap2.physicalDpiX() / pixmap2.logicalDpiX();
+    QCOMPARE(scale, 2);
+
+    pixmap2 = QPixmap(64, 64);
+    scale = pixmap2.physicalDpiX() / pixmap2.logicalDpiX();
+    QCOMPARE(scale, 1);
+}
+        
 
 #if defined(Q_OS_SYMBIAN) && !defined(QT_NO_OPENVG)
 Q_OPENVG_EXPORT VGImage qPixmapToVGImage(const QPixmap& pixmap);
