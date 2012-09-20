@@ -1264,8 +1264,8 @@ bool QImageReader::read(QImage *image)
         }
     }
 
-    // successful read; check for @2x and set scale factor
-    if (fileName().contains("@2x")) {
+    // successful read; check for "@2x" suffix and set scale factor
+    if (QFileInfo(fileName()).baseName().endsWith("@2x")) {
         image->setDpiScaleFactor(2.0);
     }
 
