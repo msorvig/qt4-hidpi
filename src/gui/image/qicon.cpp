@@ -300,7 +300,6 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
     }
 
 #ifdef Q_WS_MAC
-    extern void qt_mac_set_pixmap_scale(QPixmap *pixmap, int scale);
     if (pm.size().width() > inSize.width()) // detect HiDPI pixmap
         pm.setDpiScaleFactor(2.0);
 #endif

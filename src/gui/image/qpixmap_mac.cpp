@@ -240,7 +240,7 @@ void QMacPixmapData::fromImage(const QImage &img,
     h = img.height();
     is_null = (w <= 0 || h <= 0);
     d = (pixelType() == BitmapType ? 1 : img.depth());
-    dpiScaleFactor = img.physicalDpiX() / img.logicalDpiY();
+    dpiScaleFactor = img.dpiScaleFactor();
 
     QImage image = img;
     int dd = QPixmap::defaultDepth();
