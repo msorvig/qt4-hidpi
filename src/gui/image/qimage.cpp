@@ -1765,6 +1765,7 @@ qreal QImage::dpiScaleFactor() const
 */
 void QImage::setDpiScaleFactor(qreal scale)
 {
+    detach();
     d->dpiScaleFactor = scale;
 }
 

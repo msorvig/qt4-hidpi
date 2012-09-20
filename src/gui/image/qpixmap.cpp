@@ -816,6 +816,7 @@ qreal QPixmap::dpiScaleFactor() const
 */
 void QPixmap::setDpiScaleFactor(qreal scaleFactor)
 {
+    detach();
     data->dpiScaleFactor = scaleFactor;
 }
 
