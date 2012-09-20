@@ -1561,8 +1561,18 @@ CGFloat qt_mac_get_scalefactor(QWidget *window)
     Q_UNUSED(window);
     return HIGetScaleFactor();
 #else
-    if (window == 0)
-        return [[NSScreen mainScreen] backingScaleFactor];
+    if (window == 0) {
+        // If there is no window given we answer the question
+        // "Are there any HiDPI screens connected?" by returning
+        // the highest scale factor found.
+        CGFloat highestScaleFactor = 1.0;
+        NSArray *screens = [NSScreen screens];
+        for (id screen in screens) {
+            highestScaleFactor = qMax(highestScaleFactor, [screen backingScaleFactor]);
+        }
+        return highestScaleFactor;
+    }
+
     return [qt_mac_window_for(window) backingScaleFactor];
 #endif
 }
