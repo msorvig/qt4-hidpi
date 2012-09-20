@@ -302,7 +302,7 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
 #ifdef Q_WS_MAC
     extern void qt_mac_set_pixmap_scale(QPixmap *pixmap, int scale);
     if (pm.size().width() > inSize.width()) // detect HiDPI pixmap
-        pm.setDPIScale(2.0);
+        pm.setDpiScaleFactor(2.0);
 #endif
     return pm;
 }
@@ -682,16 +682,23 @@ qint64 QIcon::cacheKey() const
 
 /*!
   Returns a pixmap with the requested \a size, \a mode, and \a
-  state, generating one if necessary. The pixmap might be smaller than
-  requested, but never larger.
+  state, generating one if necessary.
 
-  \sa actualSize(), paint()
+  This function has two modes. By default, the returned pixmap might
+  be smaller than requested, but never larger. Setting the QT_HIDPI_AWARE
+  environment enables support for high-dpi pixmaps and this function
+  may then return pixmaps that are larger than the requested size,
+  with a corresponding dpi scale factor.
+
+  \sa actualSize(), paint(), QPixmap::dpiScaleFactor()
 */
 QPixmap QIcon::pixmap(const QSize &size, Mode mode, State state) const
 {
     if (!d)
         return QPixmap();
-    return d->engine->pixmap(size, mode, state);
+
+    QPixmap pm = d->engine->pixmap(size, mode, state);
+    return pm;
 }
 
 /*!

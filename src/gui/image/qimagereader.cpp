@@ -128,6 +128,7 @@
 #include <qsize.h>
 #include <qcolor.h>
 #include <qvariant.h>
+#include <qdebug.h>
 
 // factory loader
 #include <qcoreapplication.h>
@@ -1265,7 +1266,7 @@ bool QImageReader::read(QImage *image)
 
     // successful read; check for @2x and set scale factor
     if (fileName().contains("@2x")) {
-        image->setDPIScale(2.0);
+        image->setDpiScaleFactor(2.0);
     }
 
     return true;

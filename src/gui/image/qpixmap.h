@@ -109,7 +109,8 @@ public:
     QBitmap mask() const;
     void setMask(const QBitmap &);
 
-    void setDPIScale(qreal scale);
+    qreal dpiScaleFactor() const;
+    void setDpiScaleFactor(qreal scaleFactor);
 
 #ifdef QT_DEPRECATED
     QT_DEPRECATED QPixmap alphaChannel() const;
