@@ -85,7 +85,8 @@ private slots:
     void task184901_badCache();
     void task223279_inconsistentAddFile();
     void task239461_custom_iconengine_crash();
-
+    void highdpi();
+    
 private:
     QString oldCurrentDir;
 
@@ -788,6 +789,13 @@ void tst_QIcon::task239461_custom_iconengine_crash()
     QCOMPARE(IconEngine::destructorCalled, 1);
 }
 
+void tst_QIcon::highdpi()
+{
+    QIcon icon;
+    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-16.png"));
+    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-32.png"));
+    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-128.png"));
+}
 
 QTEST_MAIN(tst_QIcon)
 #include "tst_qicon.moc"
