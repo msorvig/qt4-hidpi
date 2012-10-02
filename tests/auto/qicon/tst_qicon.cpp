@@ -49,6 +49,10 @@
 #endif
 #include <qiconengine.h>
 
+#ifdef Q_WS_MAC
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
 Q_DECLARE_METATYPE(QSize)
 
 //TESTED_CLASS=
@@ -81,11 +85,11 @@ private slots:
     void streamAvailableSizes_data();
     void streamAvailableSizes();
     void fromTheme();
+    void highdpi();
 
     void task184901_badCache();
     void task223279_inconsistentAddFile();
     void task239461_custom_iconengine_crash();
-    void highdpi();
     
 private:
     QString oldCurrentDir;
@@ -732,6 +736,92 @@ void tst_QIcon::fromTheme()
     QVERIFY(abIcon.isNull());
 }
 
+void tst_QIcon::highdpi()
+{
+#ifdef Q_WS_MAC // Highdpi support is Mac-only in Qt 4
+
+    // Populate icon with pixmaps at different resolutions
+    QIcon icon;
+    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-16.png"));
+    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-32.png"));
+    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-128.png"));
+
+    QPixmap p;
+    QSize size;
+
+    // Verify standard behavior. QIcon should not produce pixmaps larger than
+    // the requested size,
+    size = QSize(16,16);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size);
+    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(icon.actualSize(size), size);
+
+    size = QSize(32,32);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size);
+    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(icon.actualSize(size), size);
+
+    size = QSize(128, 128);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size);
+    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(icon.actualSize(size), size);
+
+    // Get the global maximum scale factor for all displays.
+    extern CGFloat qt_mac_get_scalefactor(QWidget *window);
+    CGFloat globalScaleFactor = qt_mac_get_scalefactor(0);
+
+    // Enable high-dpi, which changes the behavior of QIcon::pixmap: it may now
+    // produce pixmaps that are larger than the requested size.
+    qputenv("QT_HIGHDPI_AWARE", "1");
+
+    // QIcon should produce high-dpi pixmaps if
+    // 1) there is a high-resolution pixmap available
+    // 2) there is a high-dpi display connected
+    size = QSize(16,16);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size * globalScaleFactor);
+    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
+
+    size = QSize(32,32);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size * globalScaleFactor);
+    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
+
+    size = QSize(40,40);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size * globalScaleFactor);
+    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
+
+    size = QSize(64,64);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size * globalScaleFactor);
+    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
+    // Edge case: Not enough pixels for 2x scale.
+    // Current behavior is to return as many pixels as possible, at
+    // a dpi scale factor between 1 and 2. Alternative behavior is
+    // to return a 1x pixmap in this case, which avoids scaling
+    // artifacts.
+    size = QSize(65,65);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size * p.dpiScaleFactor());
+    QCOMPARE(icon.actualSize(size), size * p.dpiScaleFactor());
+
+    size = QSize(128,128);
+    p = icon.pixmap(size);
+    QCOMPARE(p.size(), size); // No high-dpi pixmap available for 128x128
+    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(icon.actualSize(size), size);
+
+    qputenv("QT_HIGHDPI_AWARE", "");
+#endif
+}
 
 void tst_QIcon::task223279_inconsistentAddFile()
 {
@@ -787,14 +877,6 @@ void tst_QIcon::task239461_custom_iconengine_crash()
         icon.addPixmap(pixmap);
     }
     QCOMPARE(IconEngine::destructorCalled, 1);
-}
-
-void tst_QIcon::highdpi()
-{
-    QIcon icon;
-    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-16.png"));
-    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-32.png"));
-    icon.addFile(QLatin1String(":/trolltech/styles/commonstyle/images/standardbutton-open-128.png"));
 }
 
 QTEST_MAIN(tst_QIcon)
