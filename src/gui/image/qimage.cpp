@@ -1500,6 +1500,7 @@ QImage QImage::copy(const QRect& r) const
 
     image.d->dpmx = dotsPerMeterX();
     image.d->dpmy = dotsPerMeterY();
+    image.d->dpiScaleFactor = dpiScaleFactor();
     image.d->offset = offset();
     image.d->has_alpha_clut = d->has_alpha_clut;
 #ifndef QT_NO_IMAGE_TEXT
@@ -3988,6 +3989,7 @@ static QImage convertWithPalette(const QImage &src, QImage::Format format,
     QImage dest(src.size(), format);
     QIMAGE_SANITYCHECK_MEMORY(dest);
     dest.setColorTable(clut);
+    dest.setDpiScaleFactor(src.dpiScaleFactor());
 
 #if !defined(QT_NO_IMAGE_TEXT)
     QString textsKeys = src.text();
@@ -6687,6 +6689,7 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
 
     dImage.d->dpmx = dotsPerMeterX();
     dImage.d->dpmy = dotsPerMeterY();
+    dImage.d->dpiScaleFactor = dpiScaleFactor();
 
     switch (bpp) {
         // initizialize the data
