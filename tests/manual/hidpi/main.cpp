@@ -21,40 +21,19 @@ public:
 PixmapPainter::PixmapPainter()
 {
     pixmap1X = QPixmap(":/qticon.png");
-    qDebug() << "pixmap 1X size" << pixmap1X.size() << "scale" << pixmap1X.physicalDpiX() / pixmap1X.logicalDpiX();
-
     pixmap2X = QPixmap(":/qticon@2x.png");
-    qDebug() << "pixmap 2X size" << pixmap2X.size() << "scale" << pixmap2X.physicalDpiX() / pixmap2X.logicalDpiX();
-
     pixmapLarge = QPixmap(":/qticon_large.png");
-    qDebug() << "pixmap large size" << pixmapLarge.size() << "scale" << pixmapLarge.physicalDpiX() / pixmapLarge.logicalDpiX();
-
 
     image1X = QImage(":/qticon.png");
-    qDebug() << "image 1X size" << image1X.size() << "scale" << image1X.physicalDpiX() / image1X.logicalDpiX();
-
     image2X = QImage(":/qticon@2x.png");
-    qDebug() << "image 2X size" << image2X.size() << "scale" << image2X.physicalDpiX() / image2X.logicalDpiX();
-
     imageLarge = QImage(":/qticon_large.png");
-    qDebug() << "image large size" << imageLarge.size() << "scale" << imageLarge.physicalDpiX() / imageLarge.logicalDpiX();
 
     qtIcon.addFile(":/qticon.png");
     qtIcon.addFile(":/qticon@2x.png");
-
-    qDebug() << "Pixmap size returned by qIcon for point sizes.";
-    qDebug() << "Should be 2x upto 64x64 if any retina displays are connected, 1x otherwise";
-    QPixmap pm32 = qtIcon.pixmap(QSize(32,32));
-    qDebug() << "32x32" << pm32.size() << "scale" <<pm32.physicalDpiX() / pm32.logicalDpiX();
-    QPixmap pm64 = qtIcon.pixmap(QSize(64,64));
-    qDebug() << "64x64" << pm64.size() << "scale" <<pm64.physicalDpiX() / pm64.logicalDpiX();
-    QPixmap pm128 = qtIcon.pixmap(QSize(128,128));
-    qDebug() << "128x128" << pm128.size() << "scale" <<pm128.physicalDpiX() / pm128.logicalDpiX();
 }
 
 void PixmapPainter::paintEvent(QPaintEvent *event)
 {
-    qDebug() << "paint";
     QPainter p(this);
     p.fillRect(QRect(QPoint(0, 0), size()), QBrush(Qt::gray));
 
@@ -65,6 +44,7 @@ void PixmapPainter::paintEvent(QPaintEvent *event)
     int x = 10;
     int dx = 80;
     // draw at point
+//          qDebug() << "paint pixmap" << pixmap1X.dpiScaleFactor();
           p.drawPixmap(x, y, pixmap1X);
     x+=dx;p.drawPixmap(x, y, pixmap2X);
     x+=dx;p.drawPixmap(x, y, pixmapLarge);
@@ -97,12 +77,85 @@ void PixmapPainter::paintEvent(QPaintEvent *event)
     x+=dx * 2; p.drawImage(QRect(x, y, pixmapPointSize * 2, pixmapPointSize * 2), imageLarge);
 }
 
+class Labels : public QWidget
+{
+public:
+    Labels();
+
+    QPixmap pixmap1X;
+    QPixmap pixmap2X;
+    QPixmap pixmapLarge;
+    QIcon qtIcon;
+};
+
+Labels::Labels()
+{
+    pixmap1X = QPixmap(":/qticon.png");
+    pixmap2X = QPixmap(":/qticon@2x.png");
+    pixmapLarge = QPixmap(":/qticon_large.png");
+
+    qtIcon.addFile(":/qticon.png");
+    qtIcon.addFile(":/qticon@2x.png");
+
+    QLabel *label1x = new QLabel();
+    label1x->setPixmap(pixmap1X);
+    QLabel *label2x = new QLabel();
+    label2x->setPixmap(pixmap2X);
+    QLabel *labelIcon = new QLabel();
+    labelIcon->setPixmap(qtIcon.pixmap(QSize(64,64)));
+    QLabel *labelLarge = new QLabel();
+    labelLarge->setPixmap(pixmapLarge);
+
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    layout->addWidget(label1x); //expected low-res on high-dpi displays
+    layout->addWidget(label2x);
+    layout->addWidget(labelIcon);
+    layout->addWidget(labelLarge); // expected large size and low-res
+    setLayout(layout);
+}
+
+class MainWindow : public QMainWindow
+{
+public:
+    MainWindow();
+
+    QIcon qtIcon;
+    QIcon qtIcon1x;
+    QIcon qtIcon2x;
+
+    QToolBar *fileToolBar;
+};
+
+MainWindow::MainWindow()
+{
+    qtIcon.addFile(":/qticon.png");
+    qtIcon.addFile(":/qticon@2x.png");
+    qtIcon1x.addFile(":/qticon.png");
+    qtIcon2x.addFile(":/qticon@2x.png");
+
+    fileToolBar = addToolBar(tr("File"));
+//    fileToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    fileToolBar->addAction(new QAction(qtIcon, QString("1x and 2x"), this));
+    fileToolBar->addAction(new QAction(qtIcon1x, QString("1x"), this));
+    fileToolBar->addAction(new QAction(qtIcon2x, QString("2x"), this));
+}
+
 int main(int argc, char **argv)
 {
+    qputenv("QT_HIGHDPI_AWARE", "1");
     QApplication app(argc, argv);
-    
+
     PixmapPainter pixmapPainter;
-    pixmapPainter.show();
-    
+
+//  Enable for lots of pixmap drawing
+//    pixmapPainter.show();
+
+    Labels label;
+    label.resize(200, 200);
+    label.show();
+
+    MainWindow mainWindow;
+    mainWindow.show();
+
     return app.exec();
 }
