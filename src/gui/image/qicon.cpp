@@ -691,7 +691,7 @@ qint64 QIcon::cacheKey() const
   state, generating one if necessary.
 
   This function has two modes. By default, the returned pixmap might
-  be smaller than requested, but never larger. Setting the QT_HIDPI_AWARE
+  be smaller than requested, but never larger. Setting the QT_HIGHDPI_AWARE
   environment enables support for high-dpi pixmaps and this function
   may then return pixmaps that are larger than the requested size,
   with a corresponding dpi scale factor.
