@@ -3935,6 +3935,7 @@ QImage QImage::convertToFormat(Format format, Qt::ImageConversionFlags flags) co
 
         image.setDotsPerMeterY(dotsPerMeterY());
         image.setDotsPerMeterX(dotsPerMeterX());
+        image.setDpiScaleFactor(dpiScaleFactor());
 
 #if !defined(QT_NO_IMAGE_TEXT)
         image.d->text = d->text;
@@ -4346,6 +4347,7 @@ QImage QImage::convertBitOrder(Endian bitOrder) const
 
     image.setDotsPerMeterX(dotsPerMeterX());
     image.setDotsPerMeterY(dotsPerMeterY());
+    image.setDpiScaleFactor(dpiScaleFactor());
 
     image.d->colortable = d->colortable;
     return image;
