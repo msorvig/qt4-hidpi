@@ -301,14 +301,20 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
     }
 
 #ifdef Q_WS_MAC
-    if (enableHighdpi && pm.size().width() > inSize.width()) // detect HiDPI pixmap
-        pm.setDpiScaleFactor(2.0);
+    if (enableHighdpi && pm.size().width() > inSize.width()) // detect high-dpi pixmap
+        pm.setDpiScaleFactor(qMax(qreal(1.0), qreal(pm.size().width()) / qreal(inSize.width())));
 #endif
     return pm;
 }
 
-QSize QPixmapIconEngine::actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state)
+QSize QPixmapIconEngine::actualSize(const QSize &inSize, QIcon::Mode mode, QIcon::State state)
 {
+    QSize size = inSize;
+#ifdef Q_WS_MAC
+    bool enableHighdpi = !qgetenv("QT_HIGHDPI_AWARE").isEmpty();
+    if (enableHighdpi)
+        size *= qt_mac_get_scalefactor();
+#endif
     QSize actualSize;
     if (QPixmapIconEngineEntry *pe = bestMatch(size, mode, state, true))
         actualSize = pe->size;
