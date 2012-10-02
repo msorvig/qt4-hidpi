@@ -793,6 +793,8 @@ void QPixmap::setMask(const QBitmap &mask)
 */
 qreal QPixmap::dpiScaleFactor() const
 {
+    if (!data)
+        return qreal(1.0);
     return data->dpiScaleFactor;
 }
 

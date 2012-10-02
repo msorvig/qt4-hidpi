@@ -1742,6 +1742,8 @@ QVector<QRgb> QImage::colorTable() const
 */
 qreal QImage::dpiScaleFactor() const
 {
+    if (!d)
+        return qreal(1.0);
     return d->dpiScaleFactor;
 }
 
