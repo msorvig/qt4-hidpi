@@ -3279,8 +3279,7 @@ void QWidgetPrivate::setWindowIcon_sys(bool forceReset)
         if (icon.isNull()) {
             [iconButton setImage:nil];
         } else {
-            QPixmap scaled = pm->scaled(QSize(16,16), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            NSImage *image = static_cast<NSImage *>(qt_mac_create_nsimage(scaled));
+            NSImage *image = static_cast<NSImage *>(qt_mac_create_nsimage(*pm));
             [iconButton setImage:image];
             [image release];
         }

@@ -96,6 +96,8 @@ Labels::Labels()
 
     qtIcon.addFile(":/qticon.png");
     qtIcon.addFile(":/qticon@2x.png");
+    setWindowIcon(qtIcon);
+    setWindowTitle("Labels");
 
     QLabel *label1x = new QLabel();
     label1x->setPixmap(pixmap1X);
@@ -132,6 +134,8 @@ MainWindow::MainWindow()
     qtIcon.addFile(":/qticon@2x.png");
     qtIcon1x.addFile(":/qticon.png");
     qtIcon2x.addFile(":/qticon@2x.png");
+    setWindowIcon(qtIcon);
+    setWindowTitle("MainWindow");
 
     fileToolBar = addToolBar(tr("File"));
 //    fileToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
