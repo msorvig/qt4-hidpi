@@ -1551,7 +1551,7 @@ void qt_mac_dispatchPendingUpdateRequests(QWidget *widget)
 #ifndef QT_MAC_USE_COCOA
     HIViewRender(qt_mac_nativeview_for(widget));
 #else
-    return [qt_mac_nativeview_for(widget) displayIfNeeded];
+    [qt_mac_nativeview_for(widget) displayIfNeeded];
 #endif
 }
 
