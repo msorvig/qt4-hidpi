@@ -1086,10 +1086,10 @@ QRect QItemDelegate::rect(const QStyleOptionViewItem &option,
             break;
         case QVariant::Pixmap: {
             const QPixmap &pixmap = qvariant_cast<QPixmap>(value);
-            return QRect(QPoint(0, 0), pixmap.size() * pixmap.dpiScaleFactor() ); }
+            return QRect(QPoint(0, 0), pixmap.size() / pixmap.dpiScaleFactor() ); }
         case QVariant::Image: {
             const QImage &image = qvariant_cast<QImage>(value);
-            return QRect(QPoint(0, 0), image.size() *  image.dpiScaleFactor() ); }
+            return QRect(QPoint(0, 0), image.size() /  image.dpiScaleFactor() ); }
         case QVariant::Icon: {
             QIcon::Mode mode = d->iconMode(option.state);
             QIcon::State state = d->iconState(option.state);
