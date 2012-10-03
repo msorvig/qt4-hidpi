@@ -144,6 +144,29 @@ MainWindow::MainWindow()
     fileToolBar->addAction(new QAction(qtIcon2x, QString("2x"), this));
 }
 
+
+class StandardIcons : public QWidget
+{
+public:
+    void paintEvent(QPaintEvent *event)
+    {
+        int x = 10;
+        int y = 10;
+        int dx = 50;
+        int dy = 50;
+        int maxX = 500;
+
+        for (int iconIndex = QStyle::SP_TitleBarMenuButton; iconIndex < QStyle::SP_MediaVolumeMuted; ++iconIndex) {
+            QIcon icon = qApp->style()->standardIcon(QStyle::StandardPixmap(iconIndex));
+            QPainter p(this);
+            p.drawPixmap(x, y, icon.pixmap(dx - 5, dy - 5));
+            if (x + dx > maxX)
+                y+=dy;
+            x = ((x + dx) % maxX);
+        }
+    };
+};
+
 int main(int argc, char **argv)
 {
     qputenv("QT_HIGHDPI_AWARE", "1");
@@ -160,6 +183,10 @@ int main(int argc, char **argv)
 
     MainWindow mainWindow;
     mainWindow.show();
+
+    StandardIcons icons;
+    icons.resize(510, 510);
+    icons.show();
 
     return app.exec();
 }
