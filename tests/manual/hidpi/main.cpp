@@ -44,7 +44,7 @@ void PixmapPainter::paintEvent(QPaintEvent *event)
     int x = 10;
     int dx = 80;
     // draw at point
-//          qDebug() << "paint pixmap" << pixmap1X.dpiScaleFactor();
+//          qDebug() << "paint pixmap" << pixmap1X.devicePixelRatio();
           p.drawPixmap(x, y, pixmap1X);
     x+=dx;p.drawPixmap(x, y, pixmap2X);
     x+=dx;p.drawPixmap(x, y, pixmapLarge);

@@ -646,7 +646,7 @@ QSize QLabelPrivate::sizeForWidth(int w) const
 
     if (pixmap && !pixmap->isNull()) {
         br = pixmap->rect();
-        br.setSize(br.size() / pixmap->dpiScaleFactor());
+        br.setSize(br.size() / pixmap->devicePixelRatio());
 #ifndef QT_NO_PICTURE
     } else if (picture && !picture->isNull())
         br = picture->boundingRect();

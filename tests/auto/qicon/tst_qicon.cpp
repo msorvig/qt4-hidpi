@@ -754,19 +754,19 @@ void tst_QIcon::highdpi()
     size = QSize(16,16);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size);
-    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(p.devicePixelRatio(), 1.0);
     QCOMPARE(icon.actualSize(size), size);
 
     size = QSize(32,32);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size);
-    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(p.devicePixelRatio(), 1.0);
     QCOMPARE(icon.actualSize(size), size);
 
     size = QSize(128, 128);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size);
-    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(p.devicePixelRatio(), 1.0);
     QCOMPARE(icon.actualSize(size), size);
 
     // Get the global maximum scale factor for all displays.
@@ -783,25 +783,25 @@ void tst_QIcon::highdpi()
     size = QSize(16,16);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size * globalScaleFactor);
-    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(p.devicePixelRatio(), globalScaleFactor);
     QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
 
     size = QSize(32,32);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size * globalScaleFactor);
-    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(p.devicePixelRatio(), globalScaleFactor);
     QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
 
     size = QSize(40,40);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size * globalScaleFactor);
-    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(p.devicePixelRatio(), globalScaleFactor);
     QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
 
     size = QSize(64,64);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size * globalScaleFactor);
-    QCOMPARE(p.dpiScaleFactor(), globalScaleFactor);
+    QCOMPARE(p.devicePixelRatio(), globalScaleFactor);
     QCOMPARE(icon.actualSize(size), size * globalScaleFactor);
     // Edge case: Not enough pixels for 2x scale.
     // Current behavior is to return as many pixels as possible, at
@@ -810,13 +810,13 @@ void tst_QIcon::highdpi()
     // artifacts.
     size = QSize(65,65);
     p = icon.pixmap(size);
-    QCOMPARE(p.size(), size * p.dpiScaleFactor());
-    QCOMPARE(icon.actualSize(size), size * p.dpiScaleFactor());
+    QCOMPARE(p.size(), size * p.devicePixelRatio());
+    QCOMPARE(icon.actualSize(size), size * p.devicePixelRatio());
 
     size = QSize(128,128);
     p = icon.pixmap(size);
     QCOMPARE(p.size(), size); // No high-dpi pixmap available for 128x128
-    QCOMPARE(p.dpiScaleFactor(), 1.0);
+    QCOMPARE(p.devicePixelRatio(), 1.0);
     QCOMPARE(icon.actualSize(size), size);
 
     qputenv("QT_HIGHDPI_AWARE", "");

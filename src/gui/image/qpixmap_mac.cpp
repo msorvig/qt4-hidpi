@@ -240,7 +240,7 @@ void QMacPixmapData::fromImage(const QImage &img,
     h = img.height();
     is_null = (w <= 0 || h <= 0);
     d = (pixelType() == BitmapType ? 1 : img.depth());
-    dpiScaleFactor = img.dpiScaleFactor();
+    devicePixelRatio = img.dpiScaleFactor();
 
     QImage image = img;
     int dd = QPixmap::defaultDepth();
@@ -392,7 +392,7 @@ QImage QMacPixmapData::toImage() const
         // exit if image was not created (out of memory)
     if (image.isNull())
         return image;
-    image.setDpiScaleFactor(dpiScaleFactor);
+    image.setDevicePixelRatio(devicePixelRatio);
 
     quint32 *sptr = pixels, *srow;
     const uint sbpr = bytesPerRow;
@@ -508,12 +508,12 @@ int QMacPixmapData::metric(QPaintDevice::PaintDeviceMetric theMetric) const
     case QPaintDevice::PdmDpiX:
         return int(qt_mac_defaultDpi_x());
     case QPaintDevice::PdmPhysicalDpiX: {
-        return int(qt_mac_defaultDpi_x() * dpiScaleFactor);
+        return int(qt_mac_defaultDpi_x() * devicePixelRatio);
     }
     case QPaintDevice::PdmDpiY:
         return int(qt_mac_defaultDpi_x());
     case QPaintDevice::PdmPhysicalDpiY: {
-        return int(qt_mac_defaultDpi_y() * dpiScaleFactor);
+        return int(qt_mac_defaultDpi_y() * devicePixelRatio);
     }
     case QPaintDevice::PdmDepth:
         return d;
@@ -1204,7 +1204,7 @@ void QMacPixmapData::copy(const QPixmapData *data, const QRect &rect)
     has_alpha = macData->has_alpha;
     has_mask = macData->has_mask;
     uninit = false;
-    dpiScaleFactor = macData->dpiScaleFactor;
+    devicePixelRatio = macData->dpiScaleFactor;
 
     const int x = rect.x();
     const int y = rect.y();

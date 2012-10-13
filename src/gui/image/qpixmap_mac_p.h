@@ -126,7 +126,7 @@ private:
     friend void qt_mac_cgimage_data_free(void *, const void*, size_t);
     friend IconRef qt_mac_create_iconref(const QPixmap&);
     friend CGContextRef qt_mac_cg_context(const QPaintDevice*);
-    friend void qt_mac_set_pixmap_scale(QPixmap *pixmap, int dpiScaleFactor);
+    friend void qt_mac_set_pixmap_scale(QPixmap *pixmap, int devicePixelRatio);
     friend QColor qcolorForThemeTextColor(ThemeTextColor themeColor);
 };
 

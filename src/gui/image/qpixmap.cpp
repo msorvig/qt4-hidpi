@@ -791,11 +791,11 @@ void QPixmap::setMask(const QBitmap &mask)
 
     \sa setScaleFactor(), QIcon::pixmap()
 */
-qreal QPixmap::dpiScaleFactor() const
+qreal QPixmap::devicePixelRatio() const
 {
     if (!data)
         return qreal(1.0);
-    return data->dpiScaleFactor;
+    return data->devicePixelRatio;
 }
 
 /*!
@@ -816,10 +816,10 @@ qreal QPixmap::dpiScaleFactor() const
 
     \sa scaleFactor()
 */
-void QPixmap::setDpiScaleFactor(qreal scaleFactor)
+void QPixmap::setDevicePixelRatio(qreal scaleFactor)
 {
     detach();
-    data->dpiScaleFactor = scaleFactor;
+    data->devicePixelRatio = scaleFactor;
 }
 
 #ifndef QT_NO_IMAGE_HEURISTIC_MASK

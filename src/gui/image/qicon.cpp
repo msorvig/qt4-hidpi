@@ -302,7 +302,7 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
 
 #ifdef Q_WS_MAC
     if (enableHighdpi && pm.size().width() > inSize.width()) // detect high-dpi pixmap
-        pm.setDpiScaleFactor(qMax(qreal(1.0), qreal(pm.size().width()) / qreal(inSize.width())));
+        pm.setDevicePixelRatio(qMax(qreal(1.0), qreal(pm.size().width()) / qreal(inSize.width())));
 #endif
     return pm;
 }
@@ -696,7 +696,7 @@ qint64 QIcon::cacheKey() const
   may then return pixmaps that are larger than the requested size,
   with a corresponding dpi scale factor.
 
-  \sa actualSize(), paint(), QPixmap::dpiScaleFactor()
+  \sa actualSize(), paint(), QPixmap::devicePixelRatio()
 */
 QPixmap QIcon::pixmap(const QSize &size, Mode mode, State state) const
 {
