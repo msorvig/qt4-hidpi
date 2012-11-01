@@ -240,7 +240,7 @@ void QMacPixmapData::fromImage(const QImage &img,
     h = img.height();
     is_null = (w <= 0 || h <= 0);
     d = (pixelType() == BitmapType ? 1 : img.depth());
-    devicePixelRatio = img.dpiScaleFactor();
+    devicePixelRatio = img.devicePixelRatio();
 
     QImage image = img;
     int dd = QPixmap::defaultDepth();
@@ -1204,7 +1204,7 @@ void QMacPixmapData::copy(const QPixmapData *data, const QRect &rect)
     has_alpha = macData->has_alpha;
     has_mask = macData->has_mask;
     uninit = false;
-    devicePixelRatio = macData->dpiScaleFactor;
+    devicePixelRatio = macData->devicePixelRatio;
 
     const int x = rect.x();
     const int y = rect.y();

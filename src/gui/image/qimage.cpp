@@ -1500,7 +1500,7 @@ QImage QImage::copy(const QRect& r) const
 
     image.d->dpmx = dotsPerMeterX();
     image.d->dpmy = dotsPerMeterY();
-    image.d->devicePixelRatio = dpiScaleFactor();
+    image.d->devicePixelRatio = devicePixelRatio();
     image.d->offset = offset();
     image.d->has_alpha_clut = d->has_alpha_clut;
 #ifndef QT_NO_IMAGE_TEXT
@@ -6689,7 +6689,7 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
 
     dImage.d->dpmx = dotsPerMeterX();
     dImage.d->dpmy = dotsPerMeterY();
-    dImage.d->devicePixelRatio = dpiScaleFactor();
+    dImage.d->devicePixelRatio = devicePixelRatio();
 
     switch (bpp) {
         // initizialize the data
