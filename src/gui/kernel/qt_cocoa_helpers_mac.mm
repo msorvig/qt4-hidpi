@@ -1561,6 +1561,11 @@ CGFloat qt_mac_get_scalefactor(QWidget *window)
     Q_UNUSED(window);
     return HIGetScaleFactor();
 #else
+    // No high-dpi support on 10.7 and below
+    if (QSysInfo::MacintoshVersion < QSysInfo::MV_10_8) {
+        return 1.0;
+    }
+
     if (window == 0) {
         // If there is no window given we answer the question
         // "Are there any HiDPI screens connected?" by returning
