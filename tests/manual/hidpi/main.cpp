@@ -167,6 +167,43 @@ public:
     };
 };
 
+class ImageDrawing : public QWidget
+{
+public:
+    void paintEvent(QPaintEvent *event)
+    {
+        QPainter p(this);
+
+        {   // Paint to target rect:
+            QImage image = QImage(":/qticon_large.png");
+            QRect target(10,10, 64, 64);
+            p.drawImage(target, image);
+        }
+
+        {   // Paint to target point:
+            QImage image = QImage(":/qticon_large.png");
+            image.setDevicePixelRatio(2.0);
+            QPoint target(100,10);
+            p.drawImage(target, image);
+        }
+
+        {
+            // Paint to target rect calculated from image size
+            QImage image = QImage(":/qticon_large.png");
+            image.setDevicePixelRatio(2.0);
+            QRect target(QPoint(200,10), image.size() / image.devicePixelRatio());
+            p.drawImage(target, image);
+        }
+
+        {   // Paint to target point using @2x image
+            QImage image = QImage(":/qticon@2x.png");
+            QPoint target(300,10);
+            p.drawImage(target, image);
+        }
+    };
+};
+
+
 int main(int argc, char **argv)
 {
     qputenv("QT_HIGHDPI_AWARE", "1");
@@ -179,14 +216,18 @@ int main(int argc, char **argv)
 
     Labels label;
     label.resize(200, 200);
-    label.show();
+//    label.show();
 
     MainWindow mainWindow;
-    mainWindow.show();
+//    mainWindow.show();
 
     StandardIcons icons;
     icons.resize(510, 510);
-    icons.show();
+//    icons.show();
+    
+    ImageDrawing imageDrawing;
+    imageDrawing.show();
+    
 
     return app.exec();
 }
