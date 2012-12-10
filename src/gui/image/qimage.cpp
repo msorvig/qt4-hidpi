@@ -4843,6 +4843,8 @@ QImage QImage::mirrored(bool horizontal, bool vertical) const
     QImage result(d->width, d->height, d->format);
     QIMAGE_SANITYCHECK_MEMORY(result);
 
+    image.setDevicePixelRatio(devicePixelRatio());
+
     // check if we ran out of of memory..
     if (!result.d)
         return QImage();
