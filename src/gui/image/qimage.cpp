@@ -4843,14 +4843,13 @@ QImage QImage::mirrored(bool horizontal, bool vertical) const
     QImage result(d->width, d->height, d->format);
     QIMAGE_SANITYCHECK_MEMORY(result);
 
-    image.setDevicePixelRatio(devicePixelRatio());
-
     // check if we ran out of of memory..
     if (!result.d)
         return QImage();
 
     result.d->colortable = d->colortable;
     result.d->has_alpha_clut = d->has_alpha_clut;
+    result.d->devicePixelRatio = d->devicePixelRatio;
 
     if (depth() == 1)
         w = (w+7)/8;
