@@ -749,7 +749,15 @@ void QIcon::paint(QPainter *painter, const QRect &rect, Qt::Alignment alignment,
 {
     if (!d || !painter)
         return;
-    QRect alignedRect = QStyle::alignedRect(painter->layoutDirection(), alignment, d->engine->actualSize(rect.size(), mode, state), rect);
+
+    // High-dpi pixmaps do not need aligmnent. Clamp actualSize to the
+    // passed in destination rect.
+    QSize actualSize = d->engine->actualSize(rect.size(), mode, state);
+    actualSize.setWidth(qMin(rect.width(), actualSize.width()));
+    actualSize.setHeight(qMin(rect.width(), actualSize.height()));
+
+    QRect alignedRect = QStyle::alignedRect(painter->layoutDirection(), alignment, actualSize , rect);
+
     d->engine->paint(painter, alignedRect, mode, state);
 }
 

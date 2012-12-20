@@ -356,7 +356,8 @@ void QStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option,
                 else
                     mode = QIcon::Normal;
                 QIcon::State state = option->state & QStyle::State_Open ? QIcon::On : QIcon::Off;
-                v4->decorationSize = v4->icon.actualSize(option->decorationSize, mode, state);
+                QSize actualSize = v4->icon.actualSize(option->decorationSize, mode, state);
+                v4->decorationSize = QSize(qMin(v4->decorationSize.width(), actualSize.width()), qMin(v4->decorationSize.height(), actualSize.height()));
                 break;
             }
             case QVariant::Color: {
