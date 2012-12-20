@@ -20,16 +20,16 @@ public:
 
 PixmapPainter::PixmapPainter()
 {
-    pixmap1X = QPixmap(":/qticon.png");
-    pixmap2X = QPixmap(":/qticon@2x.png");
-    pixmapLarge = QPixmap(":/qticon_large.png");
+    pixmap1X = QPixmap(":/qticon64.png");
+    pixmap2X = QPixmap(":/qticon64@2x.png");
+    pixmapLarge = QPixmap(":/qticon128.png");
 
-    image1X = QImage(":/qticon.png");
-    image2X = QImage(":/qticon@2x.png");
-    imageLarge = QImage(":/qticon_large.png");
+    image1X = QImage(":/qticon64.png");
+    image2X = QImage(":/qticon64@2x.png");
+    imageLarge = QImage(":/qticon128.png");
 
-    qtIcon.addFile(":/qticon.png");
-    qtIcon.addFile(":/qticon@2x.png");
+    qtIcon.addFile(":/qticon64.png");
+    qtIcon.addFile(":/qticon64@2x.png");
 }
 
 void PixmapPainter::paintEvent(QPaintEvent *event)
@@ -90,12 +90,12 @@ public:
 
 Labels::Labels()
 {
-    pixmap1X = QPixmap(":/qticon.png");
-    pixmap2X = QPixmap(":/qticon@2x.png");
-    pixmapLarge = QPixmap(":/qticon_large.png");
+    pixmap1X = QPixmap(":/qticon64.png");
+    pixmap2X = QPixmap(":/qticon64@2x.png");
+    pixmapLarge = QPixmap(":/qticon128.png");
 
-    qtIcon.addFile(":/qticon.png");
-    qtIcon.addFile(":/qticon@2x.png");
+    qtIcon.addFile(":/qticon64.png");
+    qtIcon.addFile(":/qticon64@2x.png");
     setWindowIcon(qtIcon);
     setWindowTitle("Labels");
 
@@ -130,10 +130,10 @@ public:
 
 MainWindow::MainWindow()
 {
-    qtIcon.addFile(":/qticon.png");
-    qtIcon.addFile(":/qticon@2x.png");
-    qtIcon1x.addFile(":/qticon.png");
-    qtIcon2x.addFile(":/qticon@2x.png");
+    qtIcon.addFile(":/qticon64.png");
+    qtIcon.addFile(":/qticon64@2x.png");
+    qtIcon1x.addFile(":/qticon64.png");
+    qtIcon2x.addFile(":/qticon64@2x.png");
     setWindowIcon(qtIcon);
     setWindowTitle("MainWindow");
 
@@ -175,13 +175,13 @@ public:
         QPainter p(this);
 
         {   // Paint to target rect:
-            QImage image = QImage(":/qticon_large.png");
+            QImage image = QImage(":/qticon128.png");
             QRect target(10,10, 64, 64);
             p.drawImage(target, image);
         }
 
         {   // Paint to target point:
-            QImage image = QImage(":/qticon_large.png");
+            QImage image = QImage(":/qticon128.png");
             image.setDevicePixelRatio(2.0);
             QPoint target(100,10);
             p.drawImage(target, image);
@@ -189,14 +189,14 @@ public:
 
         {
             // Paint to target rect calculated from image size
-            QImage image = QImage(":/qticon_large.png");
+            QImage image = QImage(":/qticon128.png");
             image.setDevicePixelRatio(2.0);
             QRect target(QPoint(200,10), image.size() / image.devicePixelRatio());
             p.drawImage(target, image);
         }
 
         {   // Paint to target point using @2x image
-            QImage image = QImage(":/qticon@2x.png");
+            QImage image = QImage(":/qticon64@2x.png");
             QPoint target(300,10);
             p.drawImage(target, image);
         }
