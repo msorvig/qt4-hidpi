@@ -91,8 +91,6 @@ qreal dpiScaled(qreal value)
             ReleaseDC(0, hdcScreen);
             scale = dpi/96.0;
         }
-#elif defined(Q_WS_MAC)
-    scale = qt_mac_get_scalefactor();
 #endif
     }
     return value * scale;
