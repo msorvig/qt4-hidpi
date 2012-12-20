@@ -203,6 +203,36 @@ public:
     };
 };
 
+class Buttons : public QWidget
+{
+public:
+    Buttons()
+    {
+        QIcon icon;
+        icon.addFile(":/qticon16@2x.png");
+
+        QPushButton *button =  new QPushButton(this);
+        button->setIcon(icon);
+        button->setText("16@2x");
+
+        QTabBar *tab = new QTabBar(this);
+        tab->addTab(QIcon(":/qticon16.png"), "16@1x");
+        tab->addTab(QIcon(":/qticon16@2x.png"), "16@2x");
+        tab->addTab(QIcon(":/qticon16.png"), "");
+        tab->addTab(QIcon(":/qticon16@2x.png"), "");
+        tab->move(10, 100);
+        tab->show();
+
+        QToolBar *toolBar = new QToolBar(this);
+        toolBar->addAction(QIcon(":/qticon16.png"), "16@2x");
+        toolBar->addAction(QIcon(":/qticon16@2x.png"), "16@2x");
+        toolBar->addAction(QIcon(":/qticon32.png"), "16@2x");
+        toolBar->addAction(QIcon(":/qticon32@2x.png"), "16@2x");
+
+        toolBar->move(10, 200);
+        toolBar->show();
+    }
+};
 
 int main(int argc, char **argv)
 {
@@ -226,8 +256,13 @@ int main(int argc, char **argv)
 //    icons.show();
     
     ImageDrawing imageDrawing;
-    imageDrawing.show();
-    
+//    imageDrawing.show();
+
+    Buttons buttons;
+    buttons.resize(300, 300);
+    buttons.show();
+    buttons.raise();
+
 
     return app.exec();
 }
