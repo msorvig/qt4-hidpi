@@ -3257,9 +3257,9 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
                 QPixmap pixmap = header->icon.pixmap(proxy()->pixelMetric(PM_SmallIconSize), mode);
 
                 QRect pixr = header->rect;
-                pixr.setY(header->rect.center().y() - (pixmap.height() - 1) / 2);
+                pixr.setY(header->rect.center().y() - (pixmap.height() / pixmap.devicePixelRatio() - 1) / 2);
                 proxy()->drawItemPixmap(p, pixr, Qt::AlignVCenter, pixmap);
-                textr.translate(pixmap.width() + 2, 0);
+                textr.translate(pixmap.width() / pixmap.devicePixelRatio() + 2, 0);
             }
 
             proxy()->drawItemText(p, textr, header->textAlignment | Qt::AlignVCenter, header->palette,
@@ -3311,15 +3311,15 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
                             if (tb->toolButtonStyle == Qt::ToolButtonTextUnderIcon) {
                                 QMainWindow *mw = qobject_cast<QMainWindow *>(w->window());
                                 if (mw && mw->unifiedTitleAndToolBarOnMac()) {
-                                    pr.setHeight(pixmap.size().height());
+                                    pr.setHeight(pixmap.size().height() / pixmap.devicePixelRatio());
                                     cr.adjust(0, pr.bottom() + 1, 0, 1);
                                 } else {
-                                    pr.setHeight(pixmap.size().height() + 6);
+                                    pr.setHeight(pixmap.size().height() / pixmap.devicePixelRatio() + 6);
                                     cr.adjust(0, pr.bottom(), 0, -3);
                                 }       
                                 alignment |= Qt::AlignCenter;
                             } else {
-                                pr.setWidth(pixmap.width() + 8);
+                                pr.setWidth(pixmap.width() / pixmap.devicePixelRatio() + 8);
                                 cr.adjust(pr.right(), 0, 0, 0);
                                 alignment |= Qt::AlignLeft | Qt::AlignVCenter;
                             }
@@ -3510,10 +3510,12 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
                         if (btn->state & State_On)
                             state = QIcon::On;
                         QPixmap pixmap = btn->icon.pixmap(btn->iconSize, mode, state);
-                        contentW += pixmap.width() + QMacStylePrivate::PushButtonContentPadding;
+                        int pixmapWidth = pixmap.width() / pixmap.devicePixelRatio();
+                        int pixmapHeight = pixmap.height() / pixmap.devicePixelRatio();
+                        contentW += pixmapWidth + QMacStylePrivate::PushButtonContentPadding;
                         int iconLeftOffset = freeContentRect.x() + (freeContentRect.width() - contentW) / 2;
-                        int iconTopOffset = freeContentRect.y() + (freeContentRect.height() - pixmap.height()) / 2;
-                        QRect iconDestRect(iconLeftOffset, iconTopOffset, pixmap.width(), pixmap.height());
+                        int iconTopOffset = freeContentRect.y() + (freeContentRect.height() - pixmapHeight) / 2;
+                        QRect iconDestRect(iconLeftOffset, iconTopOffset, pixmapWidth, pixmapHeight);
                         QRect visualIconDestRect = visualRect(btn->direction, freeContentRect, iconDestRect);
                         proxy()->drawItemPixmap(p, visualIconDestRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
                         int newOffset = iconDestRect.x() + iconDestRect.width()
@@ -3686,7 +3688,8 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
                                                tab->text, QPalette::WindowText);
                     p->restore();
                     QCommonStyle::drawControl(ce, &myTab, p, w);
-                } else if (qMacVersion() >= QSysInfo::MV_10_7 && (tab->state & State_Selected)) {
+                    // ### this code path does not draw the icon. Disable it.
+                } else if (0 && qMacVersion() >= QSysInfo::MV_10_7 && (tab->state & State_Selected)) {
                     p->save();
                     rotateTabPainter(p, myTab.shape, myTab.rect);
 
@@ -3954,8 +3957,8 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
                     iconSize = comboBox->iconSize();
                 }
                 QPixmap pixmap = mi->icon.pixmap(iconSize, mode);
-                int pixw = pixmap.width();
-                int pixh = pixmap.height();
+                int pixw = pixmap.width() / pixmap.devicePixelRatio();
+                int pixh = pixmap.height() / pixmap.devicePixelRatio();
                 QRect cr(xpos, contentRect.y(), checkcol, contentRect.height());
                 QRect pmr(0, 0, pixw, pixh);
                 pmr.moveCenter(cr.center());
@@ -6049,6 +6052,7 @@ QIcon QMacStyle::standardIconImplementation(StandardPixmap standardIcon, const Q
         QPixmap pixmap(qt_mac_toolbar_ext);
         if (standardIcon == SP_ToolBarVerticalExtensionButton) {
             QPixmap pix2(pixmap.height(), pixmap.width());
+            pix2.setDevicePixelRatio(pixmap.devicePixelRatio());
             pix2.fill(Qt::transparent);
             QPainter p(&pix2);
             p.translate(pix2.width(), 0);
