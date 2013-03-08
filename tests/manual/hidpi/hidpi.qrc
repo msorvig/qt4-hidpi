@@ -5,7 +5,5 @@
         <file>qticon32.png</file>
         <file>qticon32@2x.png</file>
         <file>qticon64.png</file>
-        <file>qticon64@2x.png</file>
-        <file>qticon128.png</file>
     </qresource>
 </RCC>
