@@ -115,6 +115,33 @@ static void qt_cleanup_icon_cache()
     qtIconCache()->clear();
 }
 
+/*! \internal
+
+    Returns the effective device pixel ratio.
+    New public API should set a QWindow pointer, and will get the
+    the deivcePixelRatio for that window.
+
+    Old API won't have a window pointer and qApp->devicePixelRatio()
+    will be used, iff Qt::AA_UseHighDpiPixmaps is set to prevent
+    breaking old code.
+*/
+static qreal qt_effective_device_pixel_ratio()
+{
+    bool enableHighdpi = !qgetenv("QT_HIGHDPI_AWARE").isEmpty();
+    static bool hasWarned = false;
+    if (!hasWarned && enableHighdpi) {
+        qWarning("QT_HIGHDPI_AWARE is deprecated, use qApp->setAttribute(Qt::AA_UseHighDpiPixmaps) instead.");
+        hasWarned = true;
+    }
+
+    if (enableHighdpi || qApp->testAttribute(Qt::AA_UseHighDpiPixmaps)) {
+        extern CGFloat qt_mac_get_scalefactor(QWidget *);
+        return qt_mac_get_scalefactor(0);
+    }
+
+    return qreal(1.0);
+}
+
 QIconPrivate::QIconPrivate()
     : engine(0), ref(1),
     serialNum(serialNumCounter.fetchAndAddRelaxed(1)),
@@ -239,11 +266,8 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
 {
     QPixmap pm;
     QSize size = inSize;
-
 #ifdef Q_WS_MAC
-    bool enableHighdpi = !qgetenv("QT_HIGHDPI_AWARE").isEmpty();
-    if (enableHighdpi)
-        size *= qt_mac_get_scalefactor();
+    size *= qt_effective_device_pixel_ratio();
 #endif
 
     QPixmapIconEngineEntry *pe = bestMatch(size, mode, state, false);
@@ -301,7 +325,7 @@ QPixmap QPixmapIconEngine::pixmap(const QSize &inSize, QIcon::Mode mode, QIcon::
     }
 
 #ifdef Q_WS_MAC
-    if (enableHighdpi && pm.size().width() > inSize.width()) // detect high-dpi pixmap
+    if (qt_effective_device_pixel_ratio() > 1 && pm.size().width() > inSize.width()) // detect high-dpi pixmap
         pm.setDevicePixelRatio(qMax(qreal(1.0), qreal(pm.size().width()) / qreal(inSize.width())));
 #endif
     return pm;
@@ -311,9 +335,7 @@ QSize QPixmapIconEngine::actualSize(const QSize &inSize, QIcon::Mode mode, QIcon
 {
     QSize size = inSize;
 #ifdef Q_WS_MAC
-    bool enableHighdpi = !qgetenv("QT_HIGHDPI_AWARE").isEmpty();
-    if (enableHighdpi)
-        size *= qt_mac_get_scalefactor();
+    size *= qt_effective_device_pixel_ratio();
 #endif
     QSize actualSize;
     if (QPixmapIconEngineEntry *pe = bestMatch(size, mode, state, true))
@@ -359,6 +381,9 @@ void QPixmapIconEngine::addFile(const QString &fileName, const QSize &_size, QIc
                 }
                 if (pe->size == QSize() && pe->pixmap.isNull()) {
                     pe->pixmap = QPixmap(pe->fileName);
+                    // Reset the devicePixelRatio. The pixmap may be loaded from a @2x file,
+                    // but be used as a 1x pixmap by QIcon.
+                    pe->pixmap.setDevicePixelRatio(1.0);
                     pe->size = pe->pixmap.size();
                 }
                 if(pe->size == size) {
@@ -691,8 +716,8 @@ qint64 QIcon::cacheKey() const
   state, generating one if necessary.
 
   This function has two modes. By default, the returned pixmap might
-  be smaller than requested, but never larger. Setting the QT_HIGHDPI_AWARE
-  environment enables support for high-dpi pixmaps and this function
+  be smaller than requested, but never larger. Setting the Qt::AA_UseHighDpiPixmaps
+  application attribute enables support for high-dpi pixmaps and this function
   may then return pixmaps that are larger than the requested size,
   with a corresponding dpi scale factor.
 
@@ -714,6 +739,10 @@ QPixmap QIcon::pixmap(const QSize &size, Mode mode, State state) const
 
     Returns a pixmap of size QSize(\a w, \a h). The pixmap might be smaller than
     requested, but never larger.
+
+    Setting the Qt::AA_UseHighDpiPixmaps application attribute enables this
+    function to return pixmaps that are larger than the requested size. Such
+    images will have a devicePixelRatio larger than 1.
 */
 
 /*!
@@ -723,11 +752,19 @@ QPixmap QIcon::pixmap(const QSize &size, Mode mode, State state) const
 
     Returns a pixmap of size QSize(\a extent, \a extent). The pixmap might be smaller
     than requested, but never larger.
+
+    Setting the Qt::AA_UseHighDpiPixmaps application attribute enables this
+    function to return pixmaps that are larger than the requested size. Such
+    images will have a devicePixelRatio larger than 1.
 */
 
-/*!  Returns the actual size of the icon for the requested \a size, \a
+/*!
+  Returns the actual size of the icon for the requested \a size, \a
   mode, and \a state. The result might be smaller than requested, but
   never larger.
+
+  Setting the Qt::AA_UseHighDpiPixmaps application attribute enables this
+  function to return sizes that are larger than the requested size.
 
   \sa pixmap(), paint()
 */
@@ -1192,7 +1229,8 @@ static QSize pixmapSizeHelper(QIcon::Size which)
     int i = 0;
     if (which == QIcon::Large)
         i = 1;
-    return QSize(widths[i], heights[i]);
+    return QSize(widths[i] * qt_effective_device_pixel_ratio(),
+                 heights[i] * qt_effective_device_pixel_ratio());
 }
 
 /*!
