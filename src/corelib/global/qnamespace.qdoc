@@ -180,6 +180,14 @@
             be set before QApplication is constructed. This attribute is only supported in Symbian 
             platform.
 
+    \value AA_UseHighDpiPixmaps Make QIcon::pixmap() generate high-dpi pixmaps
+           that can be larger than the requested size. Such pixmaps will have
+           devicePixelRatio set to a value higher than 1.
+
+           After setting this attribute application code that uses pixmap
+           sizes in layout geometry calculations should typically divide by
+           QPixmap::devicePixelRatio() to get device-independent layout geometry.
+
     \omitvalue AA_AttributeCount
 */
 

@@ -547,6 +547,7 @@ public:
         AA_S60DisablePartialScreenInputMode = 9,
         AA_X11InitThreads = 10,
         AA_CaptureMultimediaKeys = 11,
+        AA_UseHighDpiPixmaps = 12,
 
         // Add new attributes before this line
         AA_AttributeCount
